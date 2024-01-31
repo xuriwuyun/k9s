@@ -109,6 +109,7 @@ func (Pod) Header(ns string) Header {
 		HeaderColumn{Name: "READINESS GATES", Wide: true},
 		HeaderColumn{Name: "QOS", Wide: true},
 		HeaderColumn{Name: "LABELS", Wide: true},
+		HeaderColumn{Name: "ROLE"},
 		HeaderColumn{Name: "VALID", Wide: true},
 		HeaderColumn{Name: "AGE", Time: true},
 	}
@@ -151,6 +152,7 @@ func (p Pod) Render(o interface{}, ns string, row *Row) error {
 	c, r := gatherCoMX(po.Spec.Containers, ccmx)
 	phase := p.Phase(&po)
 	row.ID = client.MetaFQN(po.ObjectMeta)
+	role := po.Labels["kubeblocks.io/role"]
 	row.Fields = Fields{
 		po.Namespace,
 		po.ObjectMeta.Name,
@@ -173,6 +175,7 @@ func (p Pod) Render(o interface{}, ns string, row *Row) error {
 		asReadinessGate(po),
 		p.mapQOS(po.Status.QOSClass),
 		mapToStr(po.Labels),
+		role,
 		AsStatus(p.diagnose(phase, cr, len(cs))),
 		ToAge(po.GetCreationTimestamp()),
 	}
