@@ -91,6 +91,7 @@ func (Pod) Header(ns string) Header {
 		HeaderColumn{Name: "NAMESPACE"},
 		HeaderColumn{Name: "NAME"},
 		HeaderColumn{Name: "VS", VS: true},
+		HeaderColumn{Name: "ROLE"},
 		HeaderColumn{Name: "PF"},
 		HeaderColumn{Name: "READY"},
 		HeaderColumn{Name: "STATUS"},
@@ -109,7 +110,6 @@ func (Pod) Header(ns string) Header {
 		HeaderColumn{Name: "READINESS GATES", Wide: true},
 		HeaderColumn{Name: "QOS", Wide: true},
 		HeaderColumn{Name: "LABELS", Wide: true},
-		HeaderColumn{Name: "ROLE"},
 		HeaderColumn{Name: "VALID", Wide: true},
 		HeaderColumn{Name: "AGE", Time: true},
 	}
@@ -157,6 +157,7 @@ func (p Pod) Render(o interface{}, ns string, row *Row) error {
 		po.Namespace,
 		po.ObjectMeta.Name,
 		computeVulScore(po.ObjectMeta, &po.Spec),
+		role,
 		"●",
 		strconv.Itoa(cr) + "/" + strconv.Itoa(len(po.Spec.Containers)),
 		phase,
@@ -175,7 +176,6 @@ func (p Pod) Render(o interface{}, ns string, row *Row) error {
 		asReadinessGate(po),
 		p.mapQOS(po.Status.QOSClass),
 		mapToStr(po.Labels),
-		role,
 		AsStatus(p.diagnose(phase, cr, len(cs))),
 		ToAge(po.GetCreationTimestamp()),
 	}
